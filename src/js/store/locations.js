@@ -38,11 +38,11 @@ export class Locations {
     return this.cities[code].name;
   }
 
-  getAirlinesNameByCode(code) {
-    return this.airlines[code].name ? this.airlines[code].name : '';
+  getAirlineNameByCode(code) {
+    return this.airlines[code] ? this.airlines[code].name : '';
   }
 
-  getAirlinesLogoByCode(code) {
+  getAirlineLogoByCode(code) {
     return this.airlines[code] ? this.airlines[code].logo : '';
   }
 
@@ -55,14 +55,16 @@ export class Locations {
 
   serializeAirlines(airlines) {
     return airlines.reduce((acc, item) => {
-      item.logo = `http://pics.avs.io/200/200/${item.code}.png`;
-      item.name = item.name || item.name_translations.en;
-      acc[item.code] = item;
+      const itemCopy = { ...item };
+      itemCopy.logo = `http://pics.avs.io/200/200/${itemCopy.code}.png`;
+      itemCopy.name = itemCopy.name || itemCopy.name_translations.en;
+      acc[itemCopy.code] = itemCopy;
       return acc;
     }, {});
   }
 
   serializeCountries(countries) {
+    if (!Array.isArray(countries) || !countries.length) return {};
     return countries.reduce((acc, country) => {
       acc[country.code] = country;
       return acc;
@@ -94,8 +96,8 @@ export class Locations {
         ...ticket,
         origin_name: this.getCityNameByCode(ticket.origin),
         destination_name: this.getCityNameByCode(ticket.destination),
-        airline_logo: this.getAirlinesLogoByCode(ticket.airline),
-        airline_name: this.getAirlinesNameByCode(ticket.airline),
+        airline_logo: this.getAirlineLogoByCode(ticket.airline),
+        airline_name: this.getAirlineNameByCode(ticket.airline),
         departure_at: this.formatDate(ticket.departure_at, 'dd MMM yyyy hh:mm'),
         return_at: this.formatDate(ticket.return_at, 'dd MMM yyyy hh:mm'),
       };
